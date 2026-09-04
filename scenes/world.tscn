@@ -1,0 +1,257 @@
+[gd_scene format=3 uid="uid://j2xg7c34fq74"]
+
+[ext_resource type="Script" uid="uid://jf0bfljbl52x" path="res://scripts/world.gd" id="1_4wyf3"]
+[ext_resource type="Texture2D" uid="uid://bngl01rk6ps8t" path="res://assets/rooms/snowy_background.png" id="1_rwgxs"]
+[ext_resource type="Script" uid="uid://b14nscdiednp5" path="res://scripts/network_ui.gd" id="4_k0juu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rl2g8"]
+size = Vector2(1152, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8uo5t"]
+size = Vector2(1152, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ypn4l"]
+size = Vector2(9, 648)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_auiqv"]
+size = Vector2(11, 648)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_goxrl"]
+size = Vector2(167, 182.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rwgxs"]
+size = Vector2(159.5, 179)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4wyf3"]
+size = Vector2(140.5, 112.25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_k0juu"]
+size = Vector2(193, 144)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i7141"]
+size = Vector2(39, 45)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7r4gi"]
+size = Vector2(92.5, 34.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e3hyu"]
+size = Vector2(33, 37.25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q5onr"]
+size = Vector2(33, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w7kh3"]
+size = Vector2(95, 33)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4mrxx"]
+size = Vector2(7, 66.5)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_71j4m"]
+radius = 58.0517
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_71j4m"]
+size = Vector2(589, 128)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qfnet"]
+size = Vector2(39, 34)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wltt1"]
+size = Vector2(34, 36)
+
+[node name="World" type="Node2D" unique_id=1194766655]
+script = ExtResource("1_4wyf3")
+
+[node name="RoomBackground" type="Sprite2D" parent="." unique_id=1817143819]
+position = Vector2(578.5, 328)
+scale = Vector2(1.4337051, 1.3484538)
+texture = ExtResource("1_rwgxs")
+
+[node name="Walls" type="Node2D" parent="." unique_id=1057597801]
+
+[node name="TopWall" type="StaticBody2D" parent="Walls" unique_id=209684128]
+position = Vector2(576, 20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall" unique_id=1138117423]
+shape = SubResource("RectangleShape2D_rl2g8")
+
+[node name="BottomWall" type="StaticBody2D" parent="Walls" unique_id=159668993]
+position = Vector2(576, 628)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/BottomWall" unique_id=1899980209]
+position = Vector2(0, 15)
+shape = SubResource("RectangleShape2D_8uo5t")
+
+[node name="LeftWall" type="StaticBody2D" parent="Walls" unique_id=1546104369]
+position = Vector2(20, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall" unique_id=1943898858]
+position = Vector2(-15.5, 0)
+shape = SubResource("RectangleShape2D_ypn4l")
+
+[node name="RightWall" type="StaticBody2D" parent="Walls" unique_id=1081710957]
+position = Vector2(1132, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall" unique_id=1977708640]
+position = Vector2(14.5, 0)
+shape = SubResource("RectangleShape2D_auiqv")
+
+[node name="Objects" type="Node2D" parent="." unique_id=601463496]
+
+[node name="CenterHouse" type="StaticBody2D" parent="Objects" unique_id=1146872740]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/CenterHouse" unique_id=484852620]
+position = Vector2(468.5, 248.5)
+shape = SubResource("RectangleShape2D_goxrl")
+
+[node name="LeftHouse" type="StaticBody2D" parent="Objects" unique_id=539793214]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/LeftHouse" unique_id=1081393025]
+position = Vector2(118.25, 242.5)
+shape = SubResource("RectangleShape2D_rwgxs")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Objects/LeftHouse" unique_id=595463442]
+position = Vector2(224.75, 277.125)
+shape = SubResource("RectangleShape2D_4wyf3")
+
+[node name="RightHouse" type="StaticBody2D" parent="Objects" unique_id=515656218]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/RightHouse" unique_id=1270926649]
+position = Vector2(842.5, 233)
+shape = SubResource("RectangleShape2D_k0juu")
+
+[node name="BottomHouse" type="StaticBody2D" parent="Objects" unique_id=375819002]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/BottomHouse" unique_id=729712801]
+position = Vector2(162, 461)
+shape = SubResource("RectangleShape2D_k0juu")
+
+[node name="SmallObj" type="StaticBody2D" parent="Objects" unique_id=2008395325]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=1896674824]
+position = Vector2(764.5, 388.5)
+shape = SubResource("RectangleShape2D_i7141")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=568810891]
+position = Vector2(446, 553)
+shape = SubResource("RectangleShape2D_i7141")
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=1325786596]
+position = Vector2(382.25, 362.25)
+shape = SubResource("RectangleShape2D_7r4gi")
+
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=1859570175]
+position = Vector2(909.5, 334.625)
+shape = SubResource("RectangleShape2D_e3hyu")
+
+[node name="CollisionShape2D8" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=28205646]
+position = Vector2(280, 564)
+shape = SubResource("RectangleShape2D_q5onr")
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=1630365759]
+position = Vector2(559.5, 362.5)
+shape = SubResource("RectangleShape2D_w7kh3")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=1546141269]
+position = Vector2(763.5, 442.75)
+shape = SubResource("RectangleShape2D_4mrxx")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Objects/SmallObj" unique_id=606121237]
+position = Vector2(445, 601)
+shape = SubResource("RectangleShape2D_4mrxx")
+
+[node name="Trees" type="StaticBody2D" parent="Objects" unique_id=411273451]
+
+[node name="Tree1" type="CollisionShape2D" parent="Objects/Trees" unique_id=1016304035]
+position = Vector2(682, 276)
+shape = SubResource("CircleShape2D_71j4m")
+
+[node name="Tree2" type="CollisionShape2D" parent="Objects/Trees" unique_id=1147577578]
+position = Vector2(1002, 337)
+shape = SubResource("CircleShape2D_71j4m")
+
+[node name="Tree3" type="CollisionShape2D" parent="Objects/Trees" unique_id=856517886]
+position = Vector2(1086, 414)
+shape = SubResource("CircleShape2D_71j4m")
+
+[node name="Tree4" type="CollisionShape2D" parent="Objects/Trees" unique_id=804095531]
+position = Vector2(90, 580)
+shape = SubResource("CircleShape2D_71j4m")
+
+[node name="Tree7" type="CollisionShape2D" parent="Objects/Trees" unique_id=754764167]
+position = Vector2(340, 248)
+shape = SubResource("CircleShape2D_71j4m")
+
+[node name="Tree5" type="CollisionShape2D" parent="Objects/Trees" unique_id=1221697464]
+position = Vector2(498.5, 105)
+shape = SubResource("RectangleShape2D_71j4m")
+
+[node name="Tree6" type="CollisionShape2D" parent="Objects/Trees" unique_id=1084172747]
+position = Vector2(654.5, 175)
+shape = SubResource("RectangleShape2D_qfnet")
+
+[node name="Door" type="Area2D" parent="." unique_id=1418007969]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Door" unique_id=1583394446]
+position = Vector2(467, 323)
+shape = SubResource("RectangleShape2D_wltt1")
+
+[node name="NetworkUI" type="CanvasLayer" parent="." unique_id=852527721]
+script = ExtResource("4_k0juu")
+
+[node name="Panel" type="Panel" parent="NetworkUI" unique_id=1284542653]
+offset_left = 376.0
+offset_top = 150.0
+offset_right = 776.0
+offset_bottom = 500.0
+
+[node name="Title" type="Label" parent="NetworkUI/Panel" unique_id=1568423099]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 30.0
+offset_right = 219.0
+offset_bottom = 53.0
+text = "Multiplayer"
+
+[node name="HostButton" type="Button" parent="NetworkUI/Panel" unique_id=1627716099]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 300.0
+offset_bottom = 150.0
+text = "HOST GAME"
+
+[node name="IPInput" type="LineEdit" parent="NetworkUI/Panel" unique_id=433004614]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 180.0
+offset_right = 300.0
+offset_bottom = 225.0
+text = "127.0.0.1"
+placeholder_text = "Enter Server IP"
+
+[node name="JoinButton" type="Button" parent="NetworkUI/Panel" unique_id=1628923639]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 240.0
+offset_right = 300.0
+offset_bottom = 290.0
+text = "JOIN GAME"
+
+[node name="CloseButton" type="Button" parent="NetworkUI/Panel" unique_id=500260188]
+layout_mode = 0
+offset_left = 363.0
+offset_top = 6.0
+offset_right = 395.0
+offset_bottom = 37.0
+text = "X"
+
+[node name="OpenButton" type="Button" parent="NetworkUI" unique_id=435468018]
+offset_left = 11.0
+offset_top = 15.0
+offset_right = 96.0
+offset_bottom = 52.0
+text = "Network
+"
+
+[connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]

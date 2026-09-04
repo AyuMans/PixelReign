@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://xdxsyih15vbj"]
+
+[ext_resource type="Script" uid="uid://8pnaspsv7knp" path="res://scripts/music_manager.gd" id="1_hetdf"]
+[ext_resource type="AudioStream" uid="uid://dfdl5gw700u4" path="res://assets/audio/10-13. Adventure Seekers.ogg" id="1_tn5dr"]
+
+[node name="MusicManager" type="Node" unique_id=1017310780]
+script = ExtResource("1_hetdf")
+
+[node name="Music" type="AudioStreamPlayer" parent="." unique_id=416700546]
+stream = ExtResource("1_tn5dr")
+volume_db = -4.482
