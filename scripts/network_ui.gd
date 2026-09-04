@@ -38,17 +38,14 @@ func _on_host_pressed():
 func _on_join_pressed():
 	print("JOIN BUTTON CLICKED")
 
-	var ip = ip_input.text.strip_edges()
+	var address = ip_input.text.strip_edges()
 
-	if ip == "":
-		ip = "127.0.0.1"
+	if address == "":
+		print("No server address entered.")
+		return
 
-	NetworkManager.join_game(ip)
+	NetworkManager.join_game(address)
 
-
-# ============================================================
-# CLOSE NETWORK MENU
-# ============================================================
 
 func _on_close_pressed():
 	NetworkManager.network_ui_open = false
@@ -56,10 +53,6 @@ func _on_close_pressed():
 	panel.visible = false
 	open_button.visible = true
 
-
-# ============================================================
-# OPEN NETWORK MENU
-# ============================================================
 
 func _on_open_pressed():
 	NetworkManager.network_ui_open = true

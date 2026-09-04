@@ -19,6 +19,7 @@ var player_states := {}
 
 var network_ui_open := true
 
+
 func _ready():
 	if not multiplayer.peer_connected.is_connected(_on_peer_connected):
 		multiplayer.peer_connected.connect(_on_peer_connected)
@@ -34,10 +35,13 @@ func _ready():
 func host_game():
 	var peer = ENetMultiplayerPeer.new()
 
-	var error = peer.create_server(PORT, MAX_PLAYERS)
+	var error = peer.create_server(
+		PORT,
+		MAX_PLAYERS
+	)
 
 	if error != OK:
-		print("Failed to create server: ", error)
+		print("FAILED TO CREATE SERVER: ", error)
 		return
 
 	multiplayer.multiplayer_peer = peer
@@ -51,7 +55,10 @@ func host_game():
 
 	room_state_ready = true
 
-	print("Server started on port ", PORT)
+	print("================================")
+	print("PIXELREIGN LOCAL SERVER STARTED")
+	print("PORT: ", PORT)
+	print("================================")
 
 	host_started.emit()
 
@@ -60,13 +67,57 @@ func host_game():
 # JOIN
 # ============================================================
 
-func join_game(ip_address: String):
+func join_game(address: String):
+	address = address.strip_edges()
+
+	if address == "":
+		print("ERROR: Empty server address.")
+		return
+
+	var host := address
+	var port := PORT
+
+	# --------------------------------------------------------
+	# If the user entered host:port, split it.
+	# Example:
+	# cynthia-decatur.tun.ply.gg:34434
+	# --------------------------------------------------------
+
+	if address.count(":") == 1:
+		var parts = address.split(":")
+
+		if parts.size() == 2:
+			host = parts[0].strip_edges()
+
+			if parts[1].is_valid_int():
+				port = int(parts[1])
+			else:
+				print("ERROR: Invalid port: ", parts[1])
+				return
+
+	# --------------------------------------------------------
+	# Prevent invalid port numbers
+	# --------------------------------------------------------
+
+	if port < 1 or port > 65535:
+		print("ERROR: Invalid port: ", port)
+		return
+
+	print("================================")
+	print("CONNECTING TO PIXELREIGN SERVER")
+	print("HOST: ", host)
+	print("PORT: ", port)
+	print("================================")
+
 	var peer = ENetMultiplayerPeer.new()
 
-	var error = peer.create_client(ip_address, PORT)
+	var error = peer.create_client(
+		host,
+		port
+	)
 
 	if error != OK:
-		print("Failed to connect: ", error)
+		print("FAILED TO CREATE CLIENT: ", error)
 		return
 
 	player_rooms.clear()
@@ -74,18 +125,26 @@ func join_game(ip_address: String):
 
 	room_state_ready = false
 
-	if not multiplayer.connected_to_server.is_connected(_on_connected_to_server):
-		multiplayer.connected_to_server.connect(_on_connected_to_server)
+	if not multiplayer.connected_to_server.is_connected(
+		_on_connected_to_server
+	):
+		multiplayer.connected_to_server.connect(
+			_on_connected_to_server
+	)
 
 	multiplayer.multiplayer_peer = peer
 
-	print("Connecting to ", ip_address)
 
+# ============================================================
+# CONNECTED TO SERVER
+# ============================================================
 
 func _on_connected_to_server():
-	print("CONNECTED!")
-	print("MY ACTUAL PEER ID: ", multiplayer.get_unique_id())
+	print("================================")
+	print("CONNECTED TO PIXELREIGN SERVER")
+	print("MY PEER ID: ", multiplayer.get_unique_id())
 	print("IS SERVER: ", multiplayer.is_server())
+	print("================================")
 
 	client_connected.emit()
 
@@ -113,17 +172,30 @@ func _on_peer_connected(peer_id):
 	)
 
 
+# ============================================================
+# PEER DISCONNECTION
+# ============================================================
+
 func _on_peer_disconnected(peer_id):
 	print("NETWORK PEER DISCONNECTED: ", peer_id)
+
+	# Only the server handles the network-wide
+	# disconnect notification.
+
+	if not multiplayer.is_server():
+		return
 
 	player_rooms.erase(peer_id)
 	player_states.erase(peer_id)
 
-	# Tell remaining clients that this player disappeared.
-	_player_left.rpc(peer_id)
+	for client_id in multiplayer.get_peers():
+		_player_left.rpc_id(
+			client_id,
+			peer_id
+		)
 
 
-@rpc("authority", "reliable")
+@rpc("authority", "call_remote", "reliable")
 func _player_left(peer_id: int):
 	player_rooms.erase(peer_id)
 	player_states.erase(peer_id)
@@ -263,7 +335,6 @@ func send_room_player(peer_id: int):
 		peer_id
 	)
 
-	# Send the latest known state immediately.
 	if player_states.has(peer_id):
 
 		var state = player_states[peer_id]
@@ -279,10 +350,6 @@ func send_room_player(peer_id: int):
 # PLAYER MOVEMENT
 # ============================================================
 
-# ------------------------------------------------------------
-# CLIENT -> SERVER
-# ------------------------------------------------------------
-
 @rpc("any_peer", "call_remote", "unreliable")
 func send_player_state(
 	peer_id: int,
@@ -294,7 +361,6 @@ func send_player_state(
 
 	var sender_id = multiplayer.get_remote_sender_id()
 
-	# Make sure a client can only update its own player.
 	if sender_id != peer_id:
 		return
 
@@ -303,22 +369,11 @@ func send_player_state(
 		"animation": new_animation
 	}
 
-
-	# ========================================================
-	# IMPORTANT
-	# APPLY CLIENT MOVEMENT ON THE SERVER
-	# ========================================================
-
 	player_state_received.emit(
 		peer_id,
 		new_position,
 		new_animation
 	)
-
-
-	# ========================================================
-	# BROADCAST CLIENT MOVEMENT TO OTHER CLIENTS
-	# ========================================================
 
 	broadcast_player_state.rpc(
 		peer_id,
@@ -327,9 +382,9 @@ func send_player_state(
 	)
 
 
-# ------------------------------------------------------------
+# ============================================================
 # SERVER -> CLIENTS
-# ------------------------------------------------------------
+# ============================================================
 
 @rpc("authority", "call_remote", "unreliable")
 func broadcast_player_state(
@@ -366,7 +421,6 @@ func receive_player_state_from_server(
 		"animation": new_animation
 	}
 
-	# Send host movement to all clients.
 	broadcast_player_state.rpc(
 		peer_id,
 		new_position,
