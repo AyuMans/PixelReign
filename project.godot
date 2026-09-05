@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 MusicManager="*uid://xdxsyih15vbj"
 NetworkManager="*uid://d2wcxv4mgeqx0"
+ChatUi="*uid://cfpjt8ijojgyv"
 
 [display]
 

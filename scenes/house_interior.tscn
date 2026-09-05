@@ -120,6 +120,15 @@ offset_right = 395.0
 offset_bottom = 37.0
 text = "X"
 
+[node name="NameInput" type="LineEdit" parent="NetworkUI/Panel" unique_id=1932407434]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 84.0
+offset_right = 295.0
+offset_bottom = 115.0
+text = "Player"
+placeholder_text = "Enter Your Name"
+
 [node name="OpenButton" type="Button" parent="NetworkUI" unique_id=1214475410]
 offset_left = 11.0
 offset_top = 15.0

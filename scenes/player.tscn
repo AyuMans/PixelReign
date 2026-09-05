@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://baefq6suq4qbx" path="res://assets/characters/Walk/walk_right_down.png" id="11_a38lo"]
 [ext_resource type="Texture2D" uid="uid://br4qc3wfq83rm" path="res://assets/characters/Walk/walk_right_up.png" id="12_4ni07"]
 [ext_resource type="Texture2D" uid="uid://bmujk4atvrylx" path="res://assets/characters/Walk/walk_up.png" id="13_l71n6"]
+[ext_resource type="Texture2D" uid="uid://hf2fj672ish6" path="res://assets/characters/Shadow.png" id="14_f1ej7"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rl2g8"]
 radius = 13.0
@@ -752,9 +753,27 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Player" type="CharacterBody2D" unique_id=890750931]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f1ej7"]
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+bg_color = Color(0.99215686, 1, 1, 0.7137255)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[node name="Player" type="CharacterBody2D" unique_id=890750931 groups=["players"]]
+z_index = 1
 collision_layer = 2
 script = ExtResource("1_g2els")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=658162992]
+z_index = -1
+position = Vector2(-0.49999893, 7.124998)
+scale = Vector2(1.8124999, 1.3398436)
+texture = ExtResource("14_f1ej7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1802931327]
 position = Vector2(0, 11)
@@ -766,3 +785,33 @@ sprite_frames = SubResource("SpriteFrames_goxrl")
 animation = &"idle_up"
 frame = 4
 frame_progress = 0.8333146
+
+[node name="NameLabel" type="Label" parent="." unique_id=670222208]
+offset_left = -62.0
+offset_top = -47.0
+offset_right = 63.0
+offset_bottom = -24.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 14
+text = "Player"
+horizontal_alignment = 1
+
+[node name="ChatBubble" type="PanelContainer" parent="." unique_id=1946018037]
+visible = false
+z_index = 100
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = -50.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f1ej7")
+
+[node name="Label" type="Label" parent="ChatBubble" unique_id=2064624655]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ChatBubbleTimer" type="Timer" parent="." unique_id=1322419827]
+wait_time = 5.0
+one_shot = true
