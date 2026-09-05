@@ -85,12 +85,35 @@ func _ready():
 					_spawn_local_player()
 
 					_request_world_players()
+	if not NetworkManager.player_name_changed.is_connected(_on_player_name_changed):
+
+		NetworkManager.player_name_changed.connect(_on_player_name_changed)
 
 
 # ============================================================
 # HOST STARTED
 # ============================================================
+func _on_player_name_changed(
+	peer_id,
+	player_name
+):
+	var player = get_node_or_null(
+		"Player_" + str(peer_id)
+	)
 
+	if player == null:
+		return
+
+	player.set_player_name(
+		player_name
+	)
+
+	print(
+		"WORLD: Updated name for ",
+		peer_id,
+		" -> ",
+		player_name
+	)
 func _on_host_started():
 
 	if not multiplayer.is_server():
@@ -245,7 +268,18 @@ func _spawn_player(peer_id):
 	add_child(player)
 
 	player.add_to_group("players")
+	var display_name = NetworkManager.player_names.get(
+	peer_id,
+	"Player" + str(peer_id)
+	)
 
+	# For our own player, we already know the name
+	# the user entered.
+	if peer_id == multiplayer.get_unique_id():
+		if NetworkManager.pending_player_name != "":
+			display_name = NetworkManager.pending_player_name
+
+	player.set_player_name(display_name)
 
 	# ========================================================
 	# APPLY SAVED NETWORK STATE

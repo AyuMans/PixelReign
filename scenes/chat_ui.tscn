@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://cfpjt8ijojgyv"]
+
+[ext_resource type="Script" uid="uid://1lp74rapgt3o" path="res://scripts/chat_ui.gd" id="1_ausui"]
+
+[node name="ChatUI" type="CanvasLayer" unique_id=1933123621]
+script = ExtResource("1_ausui")
+
+[node name="ChatPanel" type="Panel" parent="." unique_id=1666032531]
+offset_left = 12.0
+offset_top = 406.0
+offset_right = 462.0
+offset_bottom = 636.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ChatPanel" unique_id=569299018]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 30.0
+offset_right = 440.0
+offset_bottom = 160.0
+horizontal_scroll_mode = 0
+
+[node name="ChatLog" type="VBoxContainer" parent="ChatPanel/ScrollContainer" unique_id=477245068]
+custom_minimum_size = Vector2(410, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InputRow" type="HBoxContainer" parent="." unique_id=1913666926]
+offset_left = 23.0
+offset_top = 590.0
+offset_right = 453.0
+offset_bottom = 625.0
+
+[node name="ChatInput" type="LineEdit" parent="InputRow" unique_id=961408369]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Type a message..."
+
+[node name="SendButton" type="Button" parent="InputRow" unique_id=1164737170]
+custom_minimum_size = Vector2(60, 35)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Send
+"
+
+[node name="HistoryButton" type="Button" parent="." unique_id=1512276786]
+offset_left = 402.0
+offset_top = 553.0
+offset_right = 443.0
+offset_bottom = 584.0
+text = "▼"

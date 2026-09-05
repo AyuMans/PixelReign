@@ -77,6 +77,13 @@ func _spawn_local_player():
 	add_child(player)
 	player.add_to_group("players")
 
+	var player_name = NetworkManager.player_names.get(
+		local_id,
+		"Player" + str(local_id)
+	)
+
+	player.set_player_name(player_name)
+
 	print(
 		"INTERIOR LOCAL PLAYER: ",
 		player.name,
@@ -139,6 +146,12 @@ func _spawn_player(peer_id):
 
 	add_child(player)
 	player.add_to_group("players")
+	player_name = NetworkManager.player_names.get(
+		peer_id,
+		"Player" + str(peer_id)
+	)
+
+	player.set_player_name(player_name)
 	var saved_state = NetworkManager.get_player_state(peer_id)
 
 	if saved_state != null:

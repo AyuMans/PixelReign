@@ -1,6 +1,10 @@
 extends CharacterBody2D
 
 @export var speed := 160.0
+@onready var name_label = $NameLabel
+@onready var chat_bubble = $ChatBubble
+@onready var chat_bubble_label = $ChatBubble/Label
+@onready var chat_bubble_timer = $ChatBubbleTimer
 
 var last_direction := "down"
 var current_animation := "idle_down"
@@ -8,7 +12,9 @@ var current_animation := "idle_down"
 var last_sent_position := Vector2.INF
 var last_sent_animation := ""
 
-
+func set_player_name(player_name: String):
+	name_label.text = player_name
+	
 func _ready():
 	set_physics_process(is_multiplayer_authority())
 
@@ -28,11 +34,16 @@ func _ready():
 		" | Physics: ",
 		is_physics_processing()
 	)
-
+	chat_bubble_timer.timeout.connect(_hide_chat_bubble)
 
 func _physics_process(_delta):
 
-	# Multiplayer must still be active.
+	var focused_control = get_viewport().gui_get_focus_owner()
+
+	if focused_control is LineEdit:
+		velocity = Vector2.ZERO
+		return
+
 	if not multiplayer.has_multiplayer_peer():
 		set_physics_process(false)
 		return
@@ -43,9 +54,7 @@ func _physics_process(_delta):
 
 	var peer = multiplayer.multiplayer_peer
 
-	# Client must still be connected.
 	if not multiplayer.is_server():
-
 		if peer.get_connection_status() != MultiplayerPeer.CONNECTION_CONNECTED:
 			set_physics_process(false)
 			return
@@ -63,25 +72,15 @@ func _physics_process(_delta):
 	)
 
 	if direction.length() > 0:
-
 		direction = direction.normalized()
-
 		velocity = direction * speed
-
 		update_animation(direction)
-
 	else:
-
 		velocity = Vector2.ZERO
-
-		set_animation(
-			"idle_" + last_direction
-		)
+		set_animation("idle_" + last_direction)
 
 	move_and_slide()
-
 	send_state()
-
 
 func update_animation(direction: Vector2):
 
@@ -197,3 +196,11 @@ func send_state():
 			global_position,
 			current_animation
 		)
+func show_chat_bubble(message: String):
+	chat_bubble_label.text = message
+	chat_bubble.visible = true
+	chat_bubble_timer.start()
+
+
+func _hide_chat_bubble():
+	chat_bubble.visible = false
