@@ -30,6 +30,34 @@ func _ready():
 	# Client asks server who is inside.
 	elif NetworkManager.room_state_ready:
 		_request_house_players()
+		NetworkManager.request_avatar_states.rpc_id(1)
+	
+	if not NetworkManager.player_avatar_changed.is_connected(
+	_on_player_avatar_changed
+	):
+		NetworkManager.player_avatar_changed.connect(
+			_on_player_avatar_changed
+		)
+func _on_player_avatar_changed(
+	peer_id,
+	avatar_id
+):
+
+	var player = get_node_or_null(
+		"Player_" + str(peer_id)
+	)
+
+	if player == null:
+		return
+
+	player.set_avatar(avatar_id)
+
+	print(
+		"INTERIOR: Avatar updated ",
+		peer_id,
+		" -> ",
+		avatar_id
+	)
 
 func _on_player_state_received(peer_id, new_position, new_animation):
 	if NetworkManager.player_rooms.get(peer_id, "") != "house":
@@ -54,6 +82,7 @@ func _on_player_state_received(peer_id, new_position, new_animation):
 func _on_room_state_ready():
 	if not multiplayer.is_server():
 		_request_house_players()
+		
 
 
 # ============================================================
@@ -76,6 +105,8 @@ func _spawn_local_player():
 
 	add_child(player)
 	player.add_to_group("players")
+
+	player.set_avatar(NetworkManager.selected_avatar)
 
 	var player_name = NetworkManager.player_names.get(
 		local_id,
@@ -146,6 +177,16 @@ func _spawn_player(peer_id):
 
 	add_child(player)
 	player.add_to_group("players")
+
+	if NetworkManager.player_avatars.has(peer_id):
+		player.set_avatar(
+			NetworkManager.player_avatars[peer_id]
+		)
+	elif peer_id == multiplayer.get_unique_id():
+		player.set_avatar(
+			NetworkManager.selected_avatar
+		)
+
 	player_name = NetworkManager.player_names.get(
 		peer_id,
 		"Player" + str(peer_id)

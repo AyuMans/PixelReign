@@ -18,6 +18,7 @@ signal player_name_changed(peer_id, player_name)
 
 signal chat_message_received(peer_id, player_name, message)
 signal chat_history_received(messages)
+signal player_avatar_changed(peer_id, avatar_id)
 
 var player_rooms := {}
 var room_state_ready := false
@@ -34,9 +35,14 @@ var is_connected := false
 
 var chat_logs := {
 	"world": [],
-	"house": []
+	"house": [],
+	"snow_forest": []
 }
+var selected_avatar := 1
 
+var player_avatars := {}
+
+var returning_from_snow_forest := false
 
 func set_player_name(peer_id: int, player_name: String):
 
@@ -436,16 +442,31 @@ func set_player_room(
 	new_room: String
 ):
 
+	print("================================")
+	print("SET PLAYER ROOM")
+	print("PEER: ", peer_id)
+	print("ROOM: ", new_room)
+	print("IS SERVER: ", multiplayer.is_server())
+	print("================================")
+
 	if not multiplayer.is_server():
+		print("REJECTED: NOT SERVER")
 		return
 
 	if not player_rooms.has(peer_id):
+		print("REJECTED: PLAYER NOT IN PLAYER_ROOMS")
 		return
 
-	if new_room != "world" and new_room != "house":
+	if (
+		new_room != "world"
+		and new_room != "house"
+		and new_room != "snow_forest"
+	):
+		print("REJECTED: INVALID ROOM")
 		return
 
 	if player_rooms[peer_id] == new_room:
+		print("REJECTED: PLAYER ALREADY IN THIS ROOM")
 		return
 
 	player_rooms[peer_id] = new_room
@@ -462,20 +483,31 @@ func set_player_room(
 		new_room
 	)
 
-
 @rpc("any_peer", "reliable")
 func request_room_change(
 	peer_id: int,
 	new_room: String
 ):
 
+	print("================================")
+	print("ROOM CHANGE REQUEST RECEIVED")
+	print("PEER ID: ", peer_id)
+	print("NEW ROOM: ", new_room)
+	print("================================")
+
 	if not multiplayer.is_server():
+		print("REJECTED: NOT SERVER")
 		return
 
 	var sender_id = multiplayer.get_remote_sender_id()
 
+	print("SENDER ID: ", sender_id)
+
 	if sender_id != peer_id:
+		print("REJECTED: SENDER ID DOES NOT MATCH PEER ID")
 		return
+
+	print("SENDER VERIFIED")
 
 	set_player_room(
 		peer_id,
@@ -507,7 +539,11 @@ func request_room_players(room: String):
 	if not multiplayer.is_server():
 		return
 
-	if room != "world" and room != "house":
+	if (
+		room != "world"
+		and room != "house"
+		and room != "snow_forest"
+	):
 		return
 
 	var requester = multiplayer.get_remote_sender_id()
@@ -590,7 +626,11 @@ func send_chat_message(message: String):
 
 	var room = player_rooms[sender_id]
 
-	if room != "world" and room != "house":
+	if (
+		room != "world"
+		and room != "house"
+		and room != "snow_forest"
+	):
 		return
 
 	message = message.strip_edges()
@@ -650,7 +690,11 @@ func request_chat_history(room: String):
 	if not multiplayer.is_server():
 		return
 
-	if room != "world" and room != "house":
+	if (
+		room != "world"
+		and room != "house"
+		and room != "snow_forest"
+	):
 		return
 
 	var requester = multiplayer.get_remote_sender_id()
@@ -699,6 +743,11 @@ func send_player_state(
 	if sender_id != peer_id:
 		return
 
+	if not player_rooms.has(peer_id):
+		return
+
+	var room = player_rooms[peer_id]
+
 	player_states[peer_id] = {
 		"position": new_position,
 		"animation": new_animation
@@ -710,11 +759,20 @@ func send_player_state(
 		new_animation
 	)
 
-	broadcast_player_state.rpc(
-		peer_id,
-		new_position,
-		new_animation
-	)
+	for client_id in multiplayer.get_peers():
+
+		if client_id == peer_id:
+			continue
+
+		if player_rooms.get(client_id, "") != room:
+			continue
+
+		broadcast_player_state.rpc_id(
+			client_id,
+			peer_id,
+			new_position,
+			new_animation
+		)
 
 
 # ============================================================
@@ -796,7 +854,61 @@ func request_set_player_name(
 		player_name
 	)
 
+@rpc("any_peer", "reliable")
+func request_set_avatar(avatar_id: int):
 
+	if not multiplayer.is_server():
+		return
+
+	if avatar_id != 1 and avatar_id != 2:
+		return
+
+	var peer_id = multiplayer.get_remote_sender_id()
+
+	player_avatars[peer_id] = avatar_id
+
+	_broadcast_avatar.rpc(
+		peer_id,
+		avatar_id
+	)
+
+
+@rpc("authority", "call_local", "reliable")
+func _broadcast_avatar(peer_id: int, avatar_id: int):
+
+	player_avatars[peer_id] = avatar_id
+
+	player_avatar_changed.emit(
+		peer_id,
+		avatar_id
+	)
+
+
+@rpc("any_peer", "reliable")
+func request_avatar_states():
+
+	if not multiplayer.is_server():
+		return
+
+	var requester = multiplayer.get_remote_sender_id()
+
+	for peer_id in player_avatars:
+		_send_avatar.rpc_id(
+			requester,
+			peer_id,
+			player_avatars[peer_id]
+		)
+
+
+@rpc("authority", "reliable")
+func _send_avatar(peer_id: int, avatar_id: int):
+
+	player_avatars[peer_id] = avatar_id
+
+	player_avatar_changed.emit(
+		peer_id,
+		avatar_id
+	)
 # ============================================================
 # HOST LOCAL STATE
 # ============================================================
@@ -810,16 +922,33 @@ func receive_player_state_from_server(
 	if not multiplayer.is_server():
 		return
 
+	if not player_rooms.has(peer_id):
+		return
+
+	var room = player_rooms[peer_id]
+
 	player_states[peer_id] = {
 		"position": new_position,
 		"animation": new_animation
 	}
 
-	broadcast_player_state.rpc(
+	player_state_received.emit(
 		peer_id,
 		new_position,
 		new_animation
 	)
+
+	for client_id in multiplayer.get_peers():
+
+		if player_rooms.get(client_id, "") != room:
+			continue
+
+		broadcast_player_state.rpc_id(
+			client_id,
+			peer_id,
+			new_position,
+			new_animation
+		)
 
 
 # ============================================================

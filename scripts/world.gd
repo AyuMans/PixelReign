@@ -89,7 +89,32 @@ func _ready():
 
 		NetworkManager.player_name_changed.connect(_on_player_name_changed)
 
+	if not NetworkManager.player_avatar_changed.is_connected(
+	_on_player_avatar_changed
+	):
+		NetworkManager.player_avatar_changed.connect(
+			_on_player_avatar_changed
+		)
+func _on_player_avatar_changed(
+	peer_id,
+	avatar_id
+):
 
+	var player = get_node_or_null(
+		"Player_" + str(peer_id)
+	)
+
+	if player == null:
+		return
+
+	player.set_avatar(avatar_id)
+
+	print(
+		"WORLD: Avatar updated ",
+		peer_id,
+		" -> ",
+		avatar_id
+	)
 # ============================================================
 # HOST STARTED
 # ============================================================
@@ -148,6 +173,7 @@ func _on_client_connected():
 		return
 
 	_request_world_players()
+	NetworkManager.request_avatar_states.rpc_id(1)
 
 
 # ============================================================
@@ -155,23 +181,19 @@ func _on_client_connected():
 # ============================================================
 
 func _spawn_local_player():
-
 	if not multiplayer.has_multiplayer_peer():
 		return
 
 	var local_id = multiplayer.get_unique_id()
 
-	if has_node(
-		"Player_" + str(local_id)
-	):
+	if has_node("Player_" + str(local_id)):
 		return
 
-	print(
-		"WORLD: Spawning local player ",
-		local_id
-	)
-
-	_spawn_player(local_id)
+	if NetworkManager.returning_from_snow_forest:
+		_spawn_player(local_id, Vector2(1000, 540))
+		NetworkManager.returning_from_snow_forest = false
+	else:
+		_spawn_player(local_id, Vector2(576, 500))
 
 
 # ============================================================
@@ -245,7 +267,7 @@ func _on_room_player_received(peer_id):
 # SPAWN PLAYER
 # ============================================================
 
-func _spawn_player(peer_id):
+func _spawn_player(peer_id, custom_position = null):
 
 	var player_name = "Player_" + str(peer_id)
 
@@ -256,10 +278,10 @@ func _spawn_player(peer_id):
 
 	player.name = player_name
 
-	player.position = Vector2(
-		576,
-		500
-	)
+	if custom_position != null:
+		player.position = custom_position
+	else:
+		player.position = Vector2(576,500)
 
 	player.set_multiplayer_authority(
 		peer_id
@@ -268,6 +290,15 @@ func _spawn_player(peer_id):
 	add_child(player)
 
 	player.add_to_group("players")
+
+	if NetworkManager.player_avatars.has(peer_id):
+		player.set_avatar(
+			NetworkManager.player_avatars[peer_id]
+		)
+	elif peer_id == multiplayer.get_unique_id():
+		player.set_avatar(
+			NetworkManager.selected_avatar
+		)
 	var display_name = NetworkManager.player_names.get(
 	peer_id,
 	"Player" + str(peer_id)
@@ -285,17 +316,13 @@ func _spawn_player(peer_id):
 	# APPLY SAVED NETWORK STATE
 	# ========================================================
 
-	var saved_state = NetworkManager.get_player_state(
-		peer_id
-	)
+	var saved_state = NetworkManager.get_player_state(peer_id)
 
-	if saved_state != null:
-
+	if saved_state != null and custom_position == null:
 		player.global_position = saved_state["position"]
-
-		player.set_animation(
-			saved_state["animation"]
-		)
+		player.network_target_position = saved_state["position"]
+		player.network_state_initialized = true
+		player.set_animation(saved_state["animation"])
 
 
 	print(
@@ -356,7 +383,8 @@ func _on_player_state_received(
 		return
 
 
-	player.global_position = new_position
+	player.network_target_position = new_position
+	player.network_state_initialized = true
 
 	player.set_animation(
 		new_animation
@@ -434,59 +462,102 @@ func _on_door_body_entered(body):
 # ROOM CHANGED
 # ============================================================
 
-func _on_room_changed(
-	peer_id,
-	new_room
-):
-
-	# ========================================================
-	# PLAYER ENTERED HOUSE
-	# ========================================================
+func _on_room_changed(peer_id, new_room):
+	print("WORLD ROOM CHANGED: ", peer_id, " -> ", new_room)
 
 	if new_room == "house":
-
-		var player = get_node_or_null(
-			"Player_" + str(peer_id)
-		)
+		var player = get_node_or_null("Player_" + str(peer_id))
 
 		if player:
-
 			player.queue_free()
 
-
-		# This is MY player.
-		# Change to house scene.
-
-		if (
-			multiplayer.has_multiplayer_peer()
-			and peer_id == multiplayer.get_unique_id()
-		):
-
+		if multiplayer.has_multiplayer_peer() and peer_id == multiplayer.get_unique_id():
+			print("CHANGING TO HOUSE")
 			get_tree().call_deferred(
 				"change_scene_to_file",
 				"res://scenes/house_interior.tscn"
 			)
 
+	elif new_room == "snow_forest":
+		var player = get_node_or_null("Player_" + str(peer_id))
 
-	# ========================================================
-	# PLAYER RETURNED TO WORLD
-	# ========================================================
+		if player:
+			player.queue_free()
+
+		if multiplayer.has_multiplayer_peer() and peer_id == multiplayer.get_unique_id():
+			print("CHANGING TO SNOW FOREST")
+			get_tree().call_deferred(
+				"change_scene_to_file",
+				"res://scenes/snow_forest.tscn"
+			)
 
 	elif new_room == "world":
+		var player = get_node_or_null("Player_" + str(peer_id))
 
-		_spawn_player(peer_id)
+		if player:
+			player.queue_free()
 
-
-	# ========================================================
-	# PLAYER DISCONNECTED
-	# ========================================================
+		if multiplayer.has_multiplayer_peer() and peer_id == multiplayer.get_unique_id():
+			if NetworkManager.returning_from_snow_forest:
+				_spawn_player(peer_id, Vector2(1000, 540))
+				NetworkManager.returning_from_snow_forest = false
+			else:
+				_spawn_player(peer_id, Vector2(576, 500))
 
 	elif new_room == "disconnected":
-
 		var disconnected_player = get_node_or_null(
 			"Player_" + str(peer_id)
 		)
 
 		if disconnected_player:
-
 			disconnected_player.queue_free()
+
+
+func _on_snow_forest_door_body_entered(body):
+
+	print("================================")
+	print("SNOW FOREST DOOR TRIGGERED")
+	print("BODY: ", body.name)
+	print("================================")
+
+	if not multiplayer.has_multiplayer_peer():
+		print("NO MULTIPLAYER PEER")
+		return
+
+	if multiplayer.multiplayer_peer == null:
+		print("MULTIPLAYER PEER IS NULL")
+		return
+
+	var local_id = multiplayer.get_unique_id()
+
+	var local_player = get_node_or_null(
+		"Player_" + str(local_id)
+	)
+
+	print("LOCAL ID: ", local_id)
+	print("LOCAL PLAYER: ", local_player)
+
+	if body != local_player:
+		print("BODY IS NOT MY PLAYER")
+		return
+
+	print("MY PLAYER ENTERED SNOW FOREST DOOR")
+
+	if multiplayer.is_server():
+
+		print("SERVER: CHANGING ROOM TO SNOW_FOREST")
+
+		NetworkManager.set_player_room(
+			local_id,
+			"snow_forest"
+		)
+
+	else:
+
+		print("CLIENT: REQUESTING ROOM CHANGE")
+
+		NetworkManager.request_room_change.rpc_id(
+			1,
+			local_id,
+			"snow_forest"
+		)

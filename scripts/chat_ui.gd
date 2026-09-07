@@ -176,7 +176,11 @@ func _request_current_room_history():
 		""
 	)
 
-	if room != "world" and room != "house":
+	if (
+		room != "world"
+		and room != "house"
+		and room != "snow_forest"
+	):
 		return
 
 	if multiplayer.is_server():

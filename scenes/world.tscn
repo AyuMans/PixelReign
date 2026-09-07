@@ -56,7 +56,10 @@ size = Vector2(589, 128)
 size = Vector2(39, 34)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wltt1"]
-size = Vector2(34, 36)
+size = Vector2(34, 30)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jhx03"]
+size = Vector2(34, 148)
 
 [node name="World" type="Node2D" unique_id=1194766655]
 script = ExtResource("1_4wyf3")
@@ -193,7 +196,7 @@ shape = SubResource("RectangleShape2D_qfnet")
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door" unique_id=1583394446]
-position = Vector2(467, 323)
+position = Vector2(469, 329)
 shape = SubResource("RectangleShape2D_wltt1")
 
 [node name="NetworkUI" type="CanvasLayer" parent="." unique_id=852527721]
@@ -264,4 +267,13 @@ offset_bottom = 52.0
 text = "Network
 "
 
+[node name="SnowForestDoor" type="Area2D" parent="." unique_id=843067060]
+position = Vector2(650, 0)
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SnowForestDoor" unique_id=935246003]
+position = Vector2(478, 563)
+shape = SubResource("RectangleShape2D_jhx03")
+
 [connection signal="body_entered" from="Door" to="." method="_on_door_body_entered"]
+[connection signal="body_entered" from="SnowForestDoor" to="." method="_on_snow_forest_door_body_entered"]

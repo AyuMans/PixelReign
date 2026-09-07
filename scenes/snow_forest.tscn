@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://cbhr5e2tlarmj"]
+
+[ext_resource type="Texture2D" uid="uid://cehf42xcym82x" path="res://assets/rooms/snowforest2/C0Ik8R.png" id="1_2fkul"]
+[ext_resource type="Script" uid="uid://14wgliij3fp1" path="res://scripts/snow_forest.gd" id="1_648ju"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2fkul"]
+size = Vector2(1152, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_648ju"]
+size = Vector2(1152, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hfypx"]
+size = Vector2(9, 648)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_83kev"]
+size = Vector2(11, 648)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_134rf"]
+size = Vector2(24, 121.5)
+
+[node name="SnowForest" type="Node2D" unique_id=1805952054]
+script = ExtResource("1_648ju")
+
+[node name="RoomBackground" type="Sprite2D" parent="." unique_id=1637361153]
+position = Vector2(573.5, 325.49997)
+scale = Vector2(1.196875, 1.3479166)
+texture = ExtResource("1_2fkul")
+
+[node name="Walls" type="Node2D" parent="." unique_id=1391780651]
+
+[node name="TopWall" type="StaticBody2D" parent="Walls" unique_id=1340101207]
+position = Vector2(576, 20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall" unique_id=1406313252]
+shape = SubResource("RectangleShape2D_2fkul")
+
+[node name="BottomWall" type="StaticBody2D" parent="Walls" unique_id=813809208]
+position = Vector2(576, 628)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/BottomWall" unique_id=740557071]
+position = Vector2(0, 15)
+shape = SubResource("RectangleShape2D_648ju")
+
+[node name="LeftWall" type="StaticBody2D" parent="Walls" unique_id=74785489]
+position = Vector2(20, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall" unique_id=254908245]
+position = Vector2(-15.5, 0)
+shape = SubResource("RectangleShape2D_hfypx")
+
+[node name="RightWall" type="StaticBody2D" parent="Walls" unique_id=875214503]
+position = Vector2(1132, 324)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall" unique_id=1740506778]
+position = Vector2(14.5, 0)
+shape = SubResource("RectangleShape2D_83kev")
+
+[node name="ExitDoor" type="Area2D" parent="." unique_id=1173708296]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitDoor" unique_id=1963395219]
+position = Vector2(18, 575.75)
+shape = SubResource("RectangleShape2D_134rf")
+
+[connection signal="body_entered" from="ExitDoor" to="." method="_on_exit_door_body_entered"]

@@ -5,18 +5,31 @@ extends CharacterBody2D
 @onready var chat_bubble = $ChatBubble
 @onready var chat_bubble_label = $ChatBubble/Label
 @onready var chat_bubble_timer = $ChatBubbleTimer
-
+const CHARACTER1_FRAMES = preload("res://assets/characters/character1/character1.tres")
+const CHARACTER2_FRAMES = preload("res://assets/characters/character2/character2.tres")
+var avatar_id := 1
 var last_direction := "down"
 var current_animation := "idle_down"
 
 var last_sent_position := Vector2.INF
 var last_sent_animation := ""
 
+
+
+@export var network_smoothing := 1000.0
+var network_target_position := Vector2.ZERO
+var network_target_animation := ""
+var network_state_initialized := false
+
+
+
 func set_player_name(player_name: String):
 	name_label.text = player_name
 	
 func _ready():
 	set_physics_process(is_multiplayer_authority())
+
+	network_target_position = global_position
 
 	var my_id := 0
 
@@ -34,6 +47,7 @@ func _ready():
 		" | Physics: ",
 		is_physics_processing()
 	)
+
 	chat_bubble_timer.timeout.connect(_hide_chat_bubble)
 
 func _physics_process(_delta):
@@ -81,7 +95,19 @@ func _physics_process(_delta):
 
 	move_and_slide()
 	send_state()
+	
+func _process(delta):
 
+	if is_multiplayer_authority():
+		return
+
+	if not network_state_initialized:
+		return
+
+	global_position = global_position.lerp(
+		network_target_position,
+		1.0 - exp(-network_smoothing * delta)
+	)
 func update_animation(direction: Vector2):
 
 	var animation_name := ""
@@ -177,6 +203,7 @@ func send_state():
 
 	last_sent_position = global_position
 	last_sent_animation = current_animation
+	
 
 	# HOST
 	if multiplayer.is_server():
@@ -204,3 +231,13 @@ func show_chat_bubble(message: String):
 
 func _hide_chat_bubble():
 	chat_bubble.visible = false
+	
+func set_avatar(new_avatar_id: int):
+	avatar_id = new_avatar_id
+
+	if avatar_id == 1:
+		$AnimatedSprite2D.sprite_frames = CHARACTER1_FRAMES
+	else:
+		$AnimatedSprite2D.sprite_frames = CHARACTER2_FRAMES
+
+	$AnimatedSprite2D.play(current_animation)
