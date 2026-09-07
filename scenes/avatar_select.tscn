@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://prh00wreqxja"]
+
+[ext_resource type="Script" uid="uid://debj77il5kbbn" path="res://scripts/avatar_select.gd" id="1_y117x"]
+
+[node name="AvatarSelect" type="CanvasLayer" unique_id=401225560]
+script = ExtResource("1_y117x")
+
+[node name="AvatarButton" type="Button" parent="." unique_id=23475096]
+offset_left = 11.0
+offset_top = 53.0
+offset_right = 96.0
+offset_bottom = 90.0
+text = "Avatar"
+
+[node name="Panel" type="Panel" parent="." unique_id=110364170]
+visible = false
+offset_left = 326.0
+offset_top = 150.0
+offset_right = 826.0
+offset_bottom = 500.0
+
+[node name="Title" type="Label" parent="Panel" unique_id=788964956]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 30.0
+offset_right = 380.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 20
+text = "Choose Your Avatar"
+
+[node name="Character1Button" type="Button" parent="Panel" unique_id=1565212752]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 120.0
+offset_right = 220.0
+offset_bottom = 220.0
+text = "Character 1"
+
+[node name="Character2Button" type="Button" parent="Panel" unique_id=942316583]
+layout_mode = 0
+offset_left = 280.0
+offset_top = 120.0
+offset_right = 430.0
+offset_bottom = 220.0
+text = "Character 2"
+
+[node name="ConfirmButton" type="Button" parent="Panel" unique_id=908237927]
+layout_mode = 0
+offset_left = 175.0
+offset_top = 270.0
+offset_right = 325.0
+offset_bottom = 320.0
+text = "Confirm"
