@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://24e8p0m1en38"]
+
+[ext_resource type="Script" uid="uid://bfm8xwd2id02y" path="res://scripts/player_card.gd" id="1_psvab"]
+
+[node name="PlayerCard" type="Panel" unique_id=391218097]
+z_index = 5
+offset_left = 450.0
+offset_top = 150.0
+offset_right = 700.0
+offset_bottom = 450.0
+script = ExtResource("1_psvab")
+
+[node name="PlayerName" type="Label" parent="." unique_id=1789409014]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 1.0
+offset_right = 106.0
+offset_bottom = 50.0
+text = "Player Name
+"
+
+[node name="Avatar" type="TextureRect" parent="." unique_id=767332815]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 29.0
+offset_right = 157.0
+offset_bottom = 179.0
+stretch_mode = 5
+
+[node name="CloseButton" type="Button" parent="." unique_id=1578532348]
+layout_mode = 0
+offset_left = 227.0
+offset_top = 5.0
+offset_right = 245.0
+offset_bottom = 36.0
+text = "X
+"

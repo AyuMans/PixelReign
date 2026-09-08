@@ -18,6 +18,9 @@ corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_acbi0"]
+height = 42.0
+
 [node name="Player" type="CharacterBody2D" unique_id=890750931 groups=["players"]]
 z_index = 1
 collision_layer = 2
@@ -69,3 +72,10 @@ autowrap_mode = 3
 [node name="ChatBubbleTimer" type="Timer" parent="." unique_id=1322419827]
 wait_time = 5.0
 one_shot = true
+
+[node name="ClickArea" type="Area2D" parent="." unique_id=521721770]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea" unique_id=729708538]
+shape = SubResource("CapsuleShape2D_acbi0")
+
+[connection signal="input_event" from="ClickArea" to="." method="_on_click_area_input_event"]

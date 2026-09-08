@@ -108,6 +108,7 @@ func _process(delta):
 		network_target_position,
 		1.0 - exp(-network_smoothing * delta)
 	)
+
 func update_animation(direction: Vector2):
 
 	var animation_name := ""
@@ -223,6 +224,7 @@ func send_state():
 			global_position,
 			current_animation
 		)
+
 func show_chat_bubble(message: String):
 	chat_bubble_label.text = message
 	chat_bubble.visible = true
@@ -241,3 +243,14 @@ func set_avatar(new_avatar_id: int):
 		$AnimatedSprite2D.sprite_frames = CHARACTER2_FRAMES
 
 	$AnimatedSprite2D.play(current_animation)
+
+
+func _on_click_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+
+			PlayerCard.show_player(
+				name_label.text,
+				avatar_id
+			)
