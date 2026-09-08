@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://prh00wreqxja"]
 
 [ext_resource type="Script" uid="uid://debj77il5kbbn" path="res://scripts/avatar_select.gd" id="1_y117x"]
+[ext_resource type="Texture2D" uid="uid://canmwylgdobxv" path="res://assets/avatars/avatar1_card.png" id="2_k8pih"]
+[ext_resource type="Texture2D" uid="uid://dh6p7gj4s0lw1" path="res://assets/avatars/avatar2_card.png" id="3_lye6m"]
 
 [node name="AvatarSelect" type="CanvasLayer" unique_id=401225560]
 script = ExtResource("1_y117x")
@@ -30,19 +32,21 @@ text = "Choose Your Avatar"
 
 [node name="Character1Button" type="Button" parent="Panel" unique_id=1565212752]
 layout_mode = 0
-offset_left = 70.0
-offset_top = 120.0
-offset_right = 220.0
-offset_bottom = 220.0
-text = "Character 1"
+offset_left = 50.0
+offset_top = 76.0
+offset_right = 190.0
+offset_bottom = 244.0
+icon = ExtResource("2_k8pih")
+expand_icon = true
 
 [node name="Character2Button" type="Button" parent="Panel" unique_id=942316583]
 layout_mode = 0
-offset_left = 280.0
-offset_top = 120.0
-offset_right = 430.0
-offset_bottom = 220.0
-text = "Character 2"
+offset_left = 291.0
+offset_top = 76.0
+offset_right = 421.0
+offset_bottom = 244.0
+icon = ExtResource("3_lye6m")
+expand_icon = true
 
 [node name="ConfirmButton" type="Button" parent="Panel" unique_id=908237927]
 layout_mode = 0

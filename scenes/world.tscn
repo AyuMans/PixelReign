@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://jf0bfljbl52x" path="res://scripts/world.gd" id="1_4wyf3"]
 [ext_resource type="Texture2D" uid="uid://bngl01rk6ps8t" path="res://assets/rooms/snowy_background.png" id="1_rwgxs"]
-[ext_resource type="Script" uid="uid://b14nscdiednp5" path="res://scripts/network_ui.gd" id="4_k0juu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rl2g8"]
 size = Vector2(1152, 40)
@@ -20,7 +19,7 @@ size = Vector2(11, 648)
 size = Vector2(167, 182.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rwgxs"]
-size = Vector2(159.5, 179)
+size = Vector2(166, 179)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4wyf3"]
 size = Vector2(140.5, 112.25)
@@ -109,7 +108,7 @@ shape = SubResource("RectangleShape2D_goxrl")
 [node name="LeftHouse" type="StaticBody2D" parent="Objects" unique_id=539793214]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Objects/LeftHouse" unique_id=1081393025]
-position = Vector2(118.25, 242.5)
+position = Vector2(115, 242.5)
 shape = SubResource("RectangleShape2D_rwgxs")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Objects/LeftHouse" unique_id=595463442]
@@ -198,74 +197,6 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door" unique_id=1583394446]
 position = Vector2(469, 329)
 shape = SubResource("RectangleShape2D_wltt1")
-
-[node name="NetworkUI" type="CanvasLayer" parent="." unique_id=852527721]
-script = ExtResource("4_k0juu")
-
-[node name="Panel" type="Panel" parent="NetworkUI" unique_id=1284542653]
-offset_left = 376.0
-offset_top = 150.0
-offset_right = 776.0
-offset_bottom = 500.0
-
-[node name="Title" type="Label" parent="NetworkUI/Panel" unique_id=1568423099]
-layout_mode = 0
-offset_left = 139.0
-offset_top = 14.0
-offset_right = 250.0
-offset_bottom = 42.0
-theme_override_font_sizes/font_size = 20
-text = "Multiplayer"
-
-[node name="HostButton" type="Button" parent="NetworkUI/Panel" unique_id=1627716099]
-layout_mode = 0
-offset_left = 100.0
-offset_top = 202.0
-offset_right = 300.0
-offset_bottom = 252.0
-text = "HOST GAME"
-
-[node name="IPInput" type="LineEdit" parent="NetworkUI/Panel" unique_id=433004614]
-layout_mode = 0
-offset_left = 100.0
-offset_top = 137.0
-offset_right = 300.0
-offset_bottom = 182.0
-text = "127.0.0.1"
-placeholder_text = "Enter Server IP"
-
-[node name="JoinButton" type="Button" parent="NetworkUI/Panel" unique_id=1628923639]
-layout_mode = 0
-offset_left = 100.0
-offset_top = 261.0
-offset_right = 300.0
-offset_bottom = 311.0
-text = "JOIN GAME"
-
-[node name="CloseButton" type="Button" parent="NetworkUI/Panel" unique_id=500260188]
-layout_mode = 0
-offset_left = 363.0
-offset_top = 6.0
-offset_right = 395.0
-offset_bottom = 37.0
-text = "X"
-
-[node name="NameInput" type="LineEdit" parent="NetworkUI/Panel" unique_id=2122372435]
-layout_mode = 0
-offset_left = 100.0
-offset_top = 84.0
-offset_right = 295.0
-offset_bottom = 115.0
-text = "Player"
-placeholder_text = "Enter Your Name"
-
-[node name="OpenButton" type="Button" parent="NetworkUI" unique_id=435468018]
-offset_left = 11.0
-offset_top = 15.0
-offset_right = 96.0
-offset_bottom = 52.0
-text = "Network
-"
 
 [node name="SnowForestDoor" type="Area2D" parent="." unique_id=843067060]
 position = Vector2(650, 0)
