@@ -22,6 +22,7 @@ NetworkManager="*uid://d2wcxv4mgeqx0"
 ChatUi="*uid://cfpjt8ijojgyv"
 AvatarSelect="*uid://prh00wreqxja"
 PlayerCard="*uid://24e8p0m1en38"
+NetworkUi="*uid://cjaoe4nhtnmd"
 
 [display]
 

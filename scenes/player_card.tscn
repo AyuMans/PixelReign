@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bfm8xwd2id02y" path="res://scripts/player_card.gd" id="1_psvab"]
 
 [node name="PlayerCard" type="Panel" unique_id=391218097]
-z_index = 5
+z_index = 101
 offset_left = 450.0
 offset_top = 150.0
 offset_right = 700.0
